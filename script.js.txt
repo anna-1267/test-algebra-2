@@ -1,0 +1,143 @@
+// Domande divise per livello con spiegazione
+const quizData = {
+  easy: [
+    {
+      question: "Quanto fa 2 + 3?",
+      options: ["4", "5", "6", "7"],
+      answer: "5",
+      explanation: "2 + 3 = 5. È una somma base."
+    },
+    {
+      question: "Quanto fa 4 × 1?",
+      options: ["1", "2", "3", "4"],
+      answer: "4",
+      explanation: "Moltiplicare per 1 non cambia il valore."
+    }
+  ],
+  medium: [
+    {
+      question: "Risolvi: 2x - 4 = 6",
+      options: ["x = 5", "x = 4", "x = 6", "x = 2"],
+      answer: "x = 5",
+      explanation: "Aggiungi 4 → 2x = 10 → dividi per 2 → x = 5."
+    },
+    {
+      question: "Semplifica: 3x + 2x",
+      options: ["6x", "5x", "x", "10x"],
+      answer: "5x",
+      explanation: "3x + 2x = 5x (termini simili)."
+    }
+  ],
+  hard: [
+    {
+      question: "Fattorizza: x² - 16",
+      options: ["(x - 4)(x + 4)", "(x - 8)(x + 2)", "(x + 8)(x - 2)", "(x + 4)²"],
+      answer: "(x - 4)(x + 4)",
+      explanation: "Differenza di quadrati: x² - 4² = (x - 4)(x + 4)."
+    },
+    {
+      question: "Risolvi: 3(x - 1) = x + 5",
+      options: ["x = 4", "x = 5", "x = 3", "x = 2"],
+      answer: "x = 4",
+      explanation: "3x - 3 = x + 5 → 2x = 8 → x = 4."
+    }
+  ]
+};
+
+// Punteggio per difficoltà
+const points = {
+  easy: 1,
+  medium: 2,
+  hard: 3
+};
+
+// Mescola un array
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+// Genera tutte le domande in ordine casuale
+function generateQuiz() {
+  const container = document.getElementById("quiz-container");
+  const allQuestions = [];
+
+  Object.keys(quizData).forEach(level => {
+    const questions = quizData[level].map(q => ({ ...q, difficulty: level }));
+    allQuestions.push(...questions);
+  });
+
+  // Mescola tutte le domande insieme
+  shuffleArray(allQuestions).forEach((item, index) => {
+    const block = document.createElement("div");
+    block.className = "question-block";
+
+    const qText = document.createElement("p");
+    qText.innerHTML = `<strong>Domanda ${index + 1}</strong> (${item.difficulty})<br>${item.question}`;
+    block.appendChild(qText);
+
+    const optionsDiv = document.createElement("div");
+    optionsDiv.className = "options";
+
+    shuffleArray(item.options).forEach(option => {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = `question${index}`;
+      input.value = option;
+      label.appendChild(input);
+      label.append(" " + option);
+      optionsDiv.appendChild(label);
+    });
+
+    block.appendChild(optionsDiv);
+    block.dataset.correct = item.answer;
+    block.dataset.explanation = item.explanation;
+    block.dataset.difficulty = item.difficulty;
+
+    container.appendChild(block);
+  });
+}
+
+// Calcola punteggio e mostra spiegazioni
+function calculateScore() {
+  const blocks = document.querySelectorAll(".question-block");
+  let score = 0;
+
+  blocks.forEach(block => {
+    const selected = block.querySelector("input[type=radio]:checked");
+    const correct = block.dataset.correct;
+    const explanation = block.dataset.explanation;
+    const difficulty = block.dataset.difficulty;
+
+    const feedback = document.createElement("div");
+    feedback.className = "feedback";
+
+    if (selected) {
+      if (selected.value === correct) {
+        score += points[difficulty];
+      } else {
+        feedback.innerHTML = `<p style="color: red;"><strong>Risposta errata:</strong> ${explanation}</p>`;
+      }
+    } else {
+      feedback.innerHTML = `<p style="color: orange;"><strong>Domanda non risposta:</strong> ${explanation}</p>`;
+    }
+
+    // Rimuove vecchio feedback se presente
+    const old = block.querySelector(".feedback");
+    if (old) old.remove();
+
+    if (feedback.innerHTML) {
+      block.appendChild(feedback);
+    }
+  });
+
+  // Mostra punteggio
+  const result = document.getElementById("result");
+  result.textContent = `Punteggio totale: ${score}`;
+}
+
+// Inizializza il quiz e collega il pulsante
+generateQuiz();
+document.getElementById("submit-btn").addEventListener("click", calculateScore);
+
+

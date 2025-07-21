@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Formativo di Matematica</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Test Formativo di Algebra</h1>
+    <p>Scegli la risposta corretta per ciascuna domanda.</p>
+
+    <section id="quiz-container">
+      <!-- Le domande saranno generate da script.js -->
+    </section>
+
+    <button id="submit-btn">Invia Risposte</button>
+    <div id="result"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
